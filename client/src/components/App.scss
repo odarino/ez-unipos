@@ -1,0 +1,40 @@
+.container-wrapper {
+  padding-top: 50px;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.m-t-10 {
+  margin-top: 10px;
+}
+
+.core-value {
+  padding-bottom: 10px;
+  button {
+    width: 100%;
+  }
+}
+
+.people {
+  display: flex;
+  justify-content: space-around;
+  padding-bottom: 20px;
+  align-items: center;
+
+  .user-info {
+    text-align: center;
+
+    .from,.to {
+      padding-bottom: 10px;
+    }
+
+    .avatar {
+      width: 196px;
+      height: 196px;
+      background-size: cover;
+      background-position: center;
+    }
+  }
+}
