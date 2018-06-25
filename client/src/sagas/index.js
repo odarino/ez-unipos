@@ -19,7 +19,11 @@ function* callGetUserInfo(action) {
 
 function* callSendMessage(action) {
     const response = yield call(Service.postMessage, action.data, action.token);
-    yield put({ type: actionTypes.SEND_MESSAGE_SUCCESS, response});
+    if(response.code === 500) {
+        yield put({ type: actionTypes.SEND_MESSAGE_FAILURE, response});
+    } else {
+        yield put({ type: actionTypes.SEND_MESSAGE_SUCCESS, response});
+    }
 }
 
 

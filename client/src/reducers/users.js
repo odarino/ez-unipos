@@ -4,7 +4,8 @@ import { reducerCall } from './index';
 
 const INITIAL_STATE = fromJS({
     loadingInfo: false,
-    result: {}
+    result: {},
+    message: ''
 })
 
 function data(state = INITIAL_STATE, action) {
@@ -23,6 +24,14 @@ class reducerClass{
 
     static SEND_MESSAGE_SUCCESS(state, action) {
         return state
+    }
+
+    static SEND_MESSAGE_FAILURE(state, action) {
+        return state.updateIn(['message'], () => action.response.message)
+    }
+
+    static ERASE_ERROR_MESSAGES(state, action) {
+        return state.updateIn(['message'], () => '')
     }
 }
 

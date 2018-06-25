@@ -62,6 +62,18 @@ router.get('/profile', (req, res) => {
 })
 
 router.post('/message', (req, res, next) => {
+  if(!req.body.userFrom) {
+    res.send({ code: 500, message: 'Who are you ?'}) 
+  }
+
+  if(!req.body.userTo) {
+    res.send({ code: 500, message: 'Send to whom ?'}) 
+  }
+
+  if(!req.body.points) {
+    res.send({ code: 500, message: 'How many points ?'}) 
+  }
+
   const bodyMessage = JSON.stringify({
     'jsonrpc': `2.0`,
     'method': config.SEND_MESSAGE,
