@@ -126,6 +126,9 @@ class App extends Component {
             <div className="error">
               {this.props.user.message}
             </div>
+            <div className="success">
+              {this.props.user.messageSuccess}
+            </div>
             <button className="btn btn-primary m-t-10" onClick={this.handleSubmit}> Send </button>
           </div>
         </div>
