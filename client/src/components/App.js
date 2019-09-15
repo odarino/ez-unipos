@@ -6,7 +6,7 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons'
 
 import './App.scss';
 import Dropdown from './Select';
-import { getUserInfo, forceLoading, sendMessage } from '../actions';
+import { getUserInfo, forceLoading, sendMessage, eraseMessage } from '../actions';
 import Loader from './Loader';
 
 library.add(faHeart)
@@ -17,30 +17,36 @@ class App extends Component {
     this.state = {
       userTo: {},
       hasError: false,
-      error: ''
+      error: '',
+      userToken: ''
     }
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   componentDidMount() {
     if(window.localStorage.getItem("authnToken") !== null) {
-      //get user info 
+      this.props.getUserInfo(window.localStorage.getItem("authnToken"))
+      this.setState({ 
+        userToken: window.localStorage.getItem("authnToken")
+      })
     }
   }
 
   onInputToken = (e) => {
     if(e.keyCode === 13) {
+      window.localStorage.setItem("authnToken", e.currentTarget.value)
       this.props.getUserInfo(e.currentTarget.value)
       this.props.forceLoading()
     }
   }
 
   handleSubmit = () => {
+    this.props.eraseMessage()
     this.props.sendMessage({
       userFrom: this.props.user.result.member.id,
       userTo: this.state.userTo.id,
       points: this.refs.points.value,
-      messages: this.state.coreValue + " " + this.refs.messages.value
+      messages: this.state.coreValue + " " + this.refs.messages.value ? this.refs.messages.value : ''
     }, this.refs.token.value)
   }
 
@@ -90,7 +96,7 @@ class App extends Component {
             <div className="form-group">
               <label htmlFor="access-token">Your token: </label>
               <input type="text" className="form-control" id="access-token" ref="token" placeholder="Enter your token" 
-                onKeyDown={this.onInputToken}
+                onKeyDown={this.onInputToken} defaultValue={this.state.userToken}
               />
               <small id="points" className="form-text text-muted">Just type once! </small>
             </div>
@@ -118,7 +124,10 @@ class App extends Component {
                 cols="60" rows="5" placeholder="Thank you for your cooperation"/>
             </div>
             <div className="error">
-
+              {this.props.user.message}
+            </div>
+            <div className="success">
+              {this.props.user.messageSuccess}
             </div>
             <button className="btn btn-primary m-t-10" onClick={this.handleSubmit}> Send </button>
           </div>
@@ -134,4 +143,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, { getUserInfo, forceLoading, sendMessage })(App);
+export default connect(mapStateToProps, { getUserInfo, forceLoading, sendMessage, eraseMessage })(App);

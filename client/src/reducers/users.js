@@ -4,7 +4,10 @@ import { reducerCall } from './index';
 
 const INITIAL_STATE = fromJS({
     loadingInfo: false,
-    result: {}
+    result: {},
+    message: '',
+    messageSuccess: '',
+    success: false
 })
 
 function data(state = INITIAL_STATE, action) {
@@ -22,7 +25,15 @@ class reducerClass{
     }
 
     static SEND_MESSAGE_SUCCESS(state, action) {
-        return state
+        return state.updateIn(['messageSuccess'], () => 'Send points successully')
+    }
+
+    static SEND_MESSAGE_FAILURE(state, action) {
+        return state.updateIn(['message'], () => action.response.message)
+    }
+
+    static ERASE_ERROR_MESSAGES(state, action) {
+        return state.updateIn(['message'], () => '')
     }
 }
 

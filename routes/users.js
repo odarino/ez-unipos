@@ -59,16 +59,31 @@ router.get('/profile', (req, res) => {
     if (error) throw new Error(error);
     res.send({ result: body.result })
   });
+
 })
 
 router.post('/message', (req, res, next) => {
+  if(!req.body.userFrom) {
+    res.send({ code: 500, message: 'Who are you ?'}) 
+  }
+
+  if(!req.body.userTo) {
+    res.send({ code: 500, message: 'Send to whom ?'}) 
+  }
+
+  if(!req.body.points) {
+    res.send({ code: 500, message: 'How many points ?'}) 
+  }
+
+  const points = parseInt(req.body.points)
+
   const bodyMessage = JSON.stringify({
     'jsonrpc': `2.0`,
     'method': config.SEND_MESSAGE,
     'params': {
       'from_member_id' : req.body.userFrom,
       'to_member_id' : req.body.userTo,
-      'point' : parseInt(req.body.points),
+      'point' : points,
       "message": req.body.messages
     },
     'id' : config.SEND_MESSAGE,
@@ -87,11 +102,44 @@ router.post('/message', (req, res, next) => {
     body: bodyMessage
   };
 
-  // request(options, function (error, response) {
-  //   if (error) throw new Error(error);
 
-  //   res.send({ code: 200, message: 'Success'})
-  // });
+  if(points <= 120) {
+    request(options, function (error, response) {
+      if (error) throw new Error(error);
+
+      res.send({ code: 200, message: 'Success'})
+    });
+  } else {
+    const resultTimes = Math.floor(times / 120)
+    recursiveRequest(req, res, resultTimes)
+  } 
 });
+
+recursiveRequest = (req, res, times) => { 
+  const options = { 
+    method: 'POST',
+    url: config.UNIPOS_URL,
+    headers: { 
+     'cache-control': 'no-cache',
+     'x-unipos-token': req.headers["x-unipos-token"],
+     'content-type': 'application/json' 
+    },
+    body: { 
+      jsonrpc: '2.0',
+      method: 'Unipos.GetProfile',
+      params: [],
+      id: 'Unipos.GetProfile' 
+    },
+      json: true 
+  };
+  if(times > 0) {
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+      recursiveRequest(req, res, times - 1) 
+    });
+  } else {
+    res.send({ code: 200, message: 'Success' })
+  }
+}
 
 module.exports = router;
