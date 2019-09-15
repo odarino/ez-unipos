@@ -12,6 +12,7 @@ export default function* sagas() {
     ];
 }
 
+//123234
 function* callGetUserInfo(action) {
     const response = yield call(Service.fetchUserInfo, action.token);
     yield put({ type: actionTypes.GET_USER_INFO_SUCCESS, response});
